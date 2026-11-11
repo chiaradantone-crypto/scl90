@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SCL-90-R – Compilazione online</title>
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--ink:#1f2a2e;--mute:#66757a;--line:#dcd8cf;--acc:#2f6f6b;--acc-ink:#fff;--sel:#2f6f6b;--warn:#a8321f;--warn-bg:#fbe9e5;--bar:#2f6f6b}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171c1e;--card:#20282b;--ink:#e8eceb;--mute:#9aa8ab;--line:#33403f;--acc:#6fb7b1;--acc-ink:#0f1b1a;--sel:#6fb7b1;--warn:#f2a496;--warn-bg:#3a2420;--bar:#6fb7b1}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:720px;margin:0 auto;padding:20px 16px 80px}
+h1{font-size:1.4rem;margin:.2em 0 .4em}h2{font-size:1.15rem;margin:1.4em 0 .5em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin:12px 0}
+p{margin:.5em 0}.mute{color:var(--mute);font-size:.92rem}
+label.f{display:block;margin:12px 0 4px;font-weight:600}
+input[type=text],input[type=number],select,textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--acc);color:var(--acc-ink);border:0;border-radius:10px;padding:13px 20px;font-weight:600}
+.btn.sec{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin:6px 0 2px}.bar>i{display:block;height:100%;background:var(--acc)}
+.q{padding:14px 0;border-bottom:1px solid var(--line)}.q:last-child{border:0}
+.q.miss{background:var(--warn-bg);margin:0 -10px;padding:14px 10px;border-radius:8px}
+.q .t{font-weight:600;margin-bottom:8px}.q .t small{color:var(--mute);font-weight:400;margin-right:6px}
+.opts{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.opts button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:10px;padding:8px 2px;min-height:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.opts button b{font-size:1.05rem}.opts button span{font-size:.66rem;line-height:1.1;color:var(--mute);text-align:center}
+.opts button.on{background:var(--sel);border-color:var(--sel);color:var(--acc-ink)}.opts button.on span{color:var(--acc-ink)}
+.legend{position:sticky;top:0;background:var(--bg);padding:8px 0;font-size:.85rem;color:var(--mute);border-bottom:1px solid var(--line);z-index:2}
+.proto{background:var(--warn-bg);color:var(--warn);border-radius:10px;padding:10px 12px;font-size:.9rem;margin-bottom:10px}
+table{width:100%;border-collapse:collapse;font-size:.92rem}th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--mute);font-weight:600;font-size:.8rem}
+td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+.alert{background:var(--warn-bg);color:var(--warn);border-radius:10px;padding:12px;margin:10px 0}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.kpi div{background:var(--bg);border-radius:10px;padding:10px;text-align:center}.kpi b{display:block;font-size:1.5rem}.kpi span{font-size:.78rem;color:var(--mute)}
+@media print{body{background:#fff;color:#000}.noprint{display:none!important}.card{border:1px solid #bbb;break-inside:avoid}}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+/* =====================================================================
+   CONFIGURAZIONE  (da compilare prima dell'uso reale)
+   ===================================================================== */
+const CONFIG = {
+  clinica: "Studio di psicoterapia",   // nome mostrato al paziente
+  scriptUrl: "https://script.google.com/macros/s/AKfycbxR9CuKAncsB9O6BMfzZ5xBc4I3n-A8bl7gnI12MjmwOQlKH4im3fW6j_Oa0rmENSmPvw/exec"      // indirizzo della web app di Apps Script
+};
+
+/* =====================================================================
+   DATI: SCL-90-R (testo item dal questionario fornito; scala 0-4)
+   ===================================================================== */
+const ITEMS = ["Mal di testa", "Nervosismo o agitazione interna", "Incapacità a scacciare pensieri, parole o idee indesiderate", "Sensazione di svenimento o di vertigini", "Perdita dell’interesse o del piacere sessuale", "Tendenza a criticare gli altri", "Convinzione che gli altri possano controllare i suoi pensieri", "Convinzione che gli altri siano responsabili dei suoi disturbi", "Difficoltà a ricordare le cose", "Preoccupazioni per la sua negligenza o trascuratezza", "Sentirsi facilmente infastidito o irritato", "Dolori al cuore o al petto", "Paura degli spazi aperti o delle strade", "Sentirsi debole o fiacco", "Idee di togliersi la vita", "Udire voci che altre persone non odono", "Tremori", "Mancanza di fiducia negli altri", "Scarso appetito", "Facili crisi di pianto", "Sentirsi intimidito nei confronti dell’altro sesso", "Sensazione di essere preso in trappola", "Paure improvvise senza ragione", "Scatti d’ira incontrollati", "Paura di uscire da solo", "Rimproverarsi per qualsiasi cosa", "Dolori alla schiena", "Senso di incapacità a portare a termine le cose", "Sentirsi solo", "Sentirsi giù di morale", "Preoccuparsi eccessivamente per qualsiasi cosa", "Mancanza di interesse", "Senso di paura", "Sentirsi facilmente ferito o offeso", "Convinzione che gli altri percepiscano i suoi pensieri", "Sensazione di non trovare comprensione o simpatia", "Sensazione che gli altri non le siano amici o l’abbiano in antipatia", "Dover fare le cose molto lentamente per essere sicuro di farle bene", "Palpitazioni o sentirsi il cuore in gola", "Senso di nausea o mal di stomaco", "Sentimenti di inferiorità", "Dolori muscolari", "Sensazione che gli altri la guardino o parlino di lei", "Difficoltà ad addormentarsi", "Bisogno di controllare ripetutamente ciò che fa", "Difficoltà a prendere decisioni", "Paura di viaggiare in auto, in autobus, nella metropolitana o in treno, etc.", "Sentirsi senza fiato", "Vampate di calore o brividi di freddo", "Necessità di evitare certi oggetti, luoghi o attività perché la spaventano", "Senso di vuoto mentale", "Intorpidimento o formicolio di alcune parti del corpo", "Nodo alla gola", "Guardare al futuro senza speranza", "Difficoltà a concentrarsi", "Senso di debolezza in qualche parte del corpo", "Sentirsi teso o sulle spine", "Senso di pesantezza alle braccia o alle gambe", "Idee di morte", "Mangiare troppo", "Senso di fastidio quando la gente la guarda o parla di lei", "Avere pensieri che non sono suoi", "Sentire l’impulso di colpire, ferire o fare del male a qualcuno", "Svegliarsi presto al mattino senza riuscire ad riaddormentarsi", "Avere bisogno di ripetere lo stesso atto, come toccare, contare, lavare, etc.", "Sonno inquieto o disturbato", "Sentire l’impulso di rompere gli oggetti", "Avere idee o convinzioni che gli altri non condividono", "Sentirsi penosamente imbarazzato in presenza di altri", "Sentirsi a disagio fra la folla, come nei negozi, al cinema,etc.", "Sensazione che tutto richieda uno sforzo", "Momenti di terrore panico", "Sentirsi a disagio quando mangia o beve in presenza di altri", "Ingaggiare frequenti discussioni", "Sentirsi a disagio quando è solo", "Convinzione che gli altri non apprezzino nella giusta misura il suo lavoro", "Sentirsi solo e triste anche in compagnia", "Senso di irrequietezza, tanto da non potere stare seduto", "Sentimenti di inutilità", "Sensazione che stia per succederle qualcosa di brutto", "Urlare e scagliare oggetti", "Avere paura di svenire davanti agli altri", "Impressione che gli altri possano approfittare di lei o delle sue azioni", "Pensieri sul sesso che lo affliggono", "Idea di dover scontare i propri peccati", "Pensieri o immagini spaventose", "Pensiero di avere una grave malattia fisica", "Non sentirsi mai vicino alle altre persone", "Sentirsi in colpa", "Idea che qualche cosa non vada bene nella sua mente"];
+const SCALE = ["Per niente","Un poco","Moderat.","Molto","Moltissimo"];
+const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* =====================================================================
+   INVIO: Firebase (REST) + email (EmailJS REST). Il paziente non vede nulla.
+   ===================================================================== */
+async function inviaRisultati(sub){
+  try{
+    // text/plain evita la richiesta preliminare CORS, che Apps Script non gestisce
+    const r = await fetch(CONFIG.scriptUrl,{method:"POST",body:JSON.stringify(sub)});
+    const j = await r.json();
+    return {ok: !!j.ok};
+  }catch(e){ return {ok:false}; }
+}
+
+/* =====================================================================
+   INTERFACCIA
+   ===================================================================== */
+const $app = document.getElementById("app");
+const store = {
+  get(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} },
+  del(k){ try{ localStorage.removeItem(k); }catch(e){} }
+};
+const PER_PAGE = 10;
+let S = { step:"intro", patient:{codice:"",eta:"",sesso:""}, consenso:false, ans:Array(90).fill(null), page:0, t0:null, showMiss:false };
+const draft = store.get("scl90_draft"); if(draft){ S = {...S,...draft,step:draft.step==="done"?"intro":draft.step}; }
+const save = () => store.set("scl90_draft",{patient:S.patient,consenso:S.consenso,ans:S.ans,page:S.page,t0:S.t0,step:S.step});
+
+function render(){
+  ({intro,anagrafica,domande,fine}[S.step]||intro)();
+  window.scrollTo(0,0);
+}
+function intro(){
+  $app.innerHTML = `<h1>Questionario SCL-90-R</h1><p class="mute">${esc(CONFIG.clinica)}</p>
+  <div class="card"><p>Ti chiediamo di compilare un breve questionario di 90 domande sui disturbi e i problemi che possono affliggere le persone. Richiede circa 15 minuti. Puoi interromperti e riprendere dallo stesso dispositivo: le risposte restano salvate sul tuo telefono o computer.</p>
+  <p>Non esistono risposte giuste o sbagliate. Il tuo terapeuta leggerà le risposte e ne parlerete insieme in seduta.</p></div>
+  <div class="card"><b>Informativa e consenso</b>
+   <p class="mute">Le risposte contengono dati relativi alla salute. Saranno trattate dal tuo terapeuta, titolare del trattamento, esclusivamente per finalità di cura, nel rispetto del Regolamento UE 2016/679 (GDPR). [Testo dell'informativa da sostituire con quello del tuo studio.]</p>
+   <label style="display:flex;gap:10px;align-items:flex-start"><input type="checkbox" id="cons" ${S.consenso?"checked":""} style="margin-top:5px;width:20px;height:20px"> <span>Ho letto l'informativa e acconsento al trattamento dei miei dati per questo scopo.</span></label></div>
+  <div class="row"><button class="btn" id="go" ${S.consenso?"":"disabled"}>Inizia</button></div>`;
+  const c=document.getElementById("cons"),g=document.getElementById("go");
+  c.onchange=()=>{S.consenso=c.checked;g.disabled=!c.checked;save();};
+  g.onclick=()=>{S.step="anagrafica";save();render();};
+}
+function anagrafica(){
+  $app.innerHTML = `<h1>I tuoi dati</h1><div class="card">
+  <label class="f" for="cod">Codice o iniziali (come concordato con il terapeuta)</label><input type="text" id="cod" autocomplete="off" value="${esc(S.patient.codice)}">
+  <label class="f" for="eta">Età</label><input type="number" id="eta" inputmode="numeric" min="14" max="110" value="${esc(S.patient.eta)}">
+  <label class="f" for="ses">Sesso</label><select id="ses"><option value="">Seleziona…</option>${["Donna","Uomo","Altro / preferisco non indicare"].map(x=>`<option ${S.patient.sesso===x?"selected":""}>${x}</option>`).join("")}</select></div>
+  <div class="row"><button class="btn sec" id="bk">Indietro</button><button class="btn" id="go" disabled>Continua</button></div>`;
+  const cod=document.getElementById("cod"),eta=document.getElementById("eta"),ses=document.getElementById("ses"),go=document.getElementById("go");
+  const chk=()=>{S.patient={codice:cod.value.trim(),eta:eta.value,sesso:ses.value};go.disabled=!(S.patient.codice&&S.patient.eta&&S.patient.sesso);save();};
+  [cod,eta,ses].forEach(e=>e.oninput=chk); chk();
+  document.getElementById("bk").onclick=()=>{S.step="intro";render();};
+  go.onclick=()=>{S.step="domande";S.page=0;S.t0=S.t0||Date.now();save();render();};
+}
+function domande(){
+  const pages = Math.ceil(90/PER_PAGE), a=S.page*PER_PAGE, b=Math.min(90,a+PER_PAGE);
+  const done = S.ans.filter(x=>x!==null).length;
+  let h = (S.errInvio?`<div class="alert">Invio non riuscito: controlla la connessione e premi di nuovo «Concludi». Le risposte non sono andate perse.</div>`:"")+`<div class="mute">Domande ${a+1}–${b} di 90 · risposte date: ${done}</div><div class="bar"><i style="width:${done/90*100}%"></i></div>
+  <div class="legend">Nell'ultima settimana, oggi compreso, in che misura ha sofferto di:</div>`;
+  for(let i=a;i<b;i++){
+    const miss = S.showMiss && S.ans[i]===null;
+    h += `<div class="q ${miss?"miss":""}" data-i="${i}"><div class="t"><small>${i+1}.</small>${esc(ITEMS[i])}</div><div class="opts">${SCALE.map((l,v)=>`<button data-v="${v}" class="${S.ans[i]===v?"on":""}" aria-label="${l}"><b>${v}</b><span>${l}</span></button>`).join("")}</div></div>`;
+  }
+  h += `<div class="row"><button class="btn sec" id="prev">Indietro</button><button class="btn" id="next">${S.page===pages-1?"Concludi":"Avanti"}</button></div>`;
+  $app.innerHTML = h;
+  $app.querySelectorAll(".q").forEach(q=>q.querySelectorAll("button").forEach(btn=>btn.onclick=()=>{
+    const i=+q.dataset.i; S.ans[i]=+btn.dataset.v; save();
+    q.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===btn)); q.classList.remove("miss");
+    const d=S.ans.filter(x=>x!==null).length; $app.querySelector(".mute").textContent=`Domande ${a+1}–${b} di 90 · risposte date: ${d}`; $app.querySelector(".bar i").style.width=(d/90*100)+"%";
+  }));
+  document.getElementById("prev").onclick=()=>{ if(S.page===0){S.step="anagrafica";}else S.page--; save();render(); };
+  document.getElementById("next").onclick=()=>{
+    const manca = S.ans.slice(a,b).some(x=>x===null);
+    if(manca){ S.showMiss=true; render(); const m=document.querySelector(".q.miss"); if(m) m.scrollIntoView({block:"center"}); return; }
+    S.showMiss=false;
+    if(S.page<pages-1){S.page++;save();render();}
+    else { const firstMiss=S.ans.findIndex(x=>x===null); if(firstMiss>=0){S.page=Math.floor(firstMiss/PER_PAGE);S.showMiss=true;render();return;} conferma(); }
+  };
+}
+async function conferma(){
+  $app.innerHTML = `<h1>Invio in corso…</h1><p class="mute">Non chiudere questa pagina.</p>`;
+  const sub = { durataSec:Math.round((Date.now()-S.t0)/1000), patient:S.patient, answers:S.ans.slice(), website:"" };
+  const esito = await inviaRisultati(sub);
+  if(!esito.ok){ S.step="domande"; S.errInvio=true; S.page=8; save(); render(); return; }
+  S.step="fine"; store.del("scl90_draft"); render();
+}
+function fine(){
+  $app.innerHTML = `<h1>Grazie!</h1><div class="card"><p>Hai completato il questionario. Le tue risposte sono state inviate al tuo terapeuta, che le leggerà e ne parlerete insieme in seduta.</p>
+  <p class="mute">Se in questo momento stai molto male o hai pensieri di farti del male, non aspettare la seduta: contatta subito il tuo terapeuta oppure chiama il 112.</p></div>`;
+}
+
+render();
+</script>
+</body>
+</html>
